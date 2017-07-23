@@ -2170,11 +2170,13 @@ def SubpixelConv2d(net, scale=2, n_out_channel=None, act=tf.identity, name='subp
     def _PS(X, r, n_out_channel):
         if n_out_channel >= 1:
             assert int(X.get_shape()[-1]) == (r ** 2) * n_out_channel, _err_log
+            X=tf.transpose(X,[0,2,1,3])
             bsize, a, b, c = X.get_shape().as_list()
             bsize = tf.shape(X)[0] # Handling Dimension(None) type for undefined batch dim
             Xs=tf.split(X,r,3) #b*h*w*r*r
             Xr=tf.concat(Xs,2) #b*h*(r*w)*r
             X=tf.reshape(Xr,(bsize,r*a,r*b,n_out_channel)) # b*(r*h)*(r*w)*c
+            X=tf.transpose(X,[0,2,1,3])
         else:
             print(_err_log)
         return X
